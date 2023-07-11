@@ -218,7 +218,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -266,3 +266,9 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
