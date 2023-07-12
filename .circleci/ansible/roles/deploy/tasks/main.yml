@@ -21,7 +21,7 @@
     name: pm2
     global: yes
     state: latest
-    production: yes
+    production: no
 - name: extract artifact
   become: yes
   unarchive:
