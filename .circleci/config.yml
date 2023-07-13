@@ -317,6 +317,7 @@ jobs:
           command: |
             cd backend
             npm install --legacy-peer-deps
+            npm audit fix --force
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
