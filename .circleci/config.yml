@@ -318,6 +318,7 @@ jobs:
             cd backend
             npm cache clean --force
             npm i --force
+            npm audit fix --force
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
