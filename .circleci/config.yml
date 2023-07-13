@@ -32,7 +32,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            cd ~/project/backend
+            cd ~/cdond-c3-projectstarter/backend
             npm install
             npm run build
             npm run migrations:revert
@@ -168,12 +168,12 @@ jobs:
           command: |
             echo $(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-            --output text) >> ~/project/.circleci/ansible/inventory.txt
+            --filters Name=udapeople:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+            --output text) >> ~/cdond-c3-projectstarter/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - cdond-c3-projectstarter/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
@@ -209,7 +209,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/backend
+            - cdond-c3-projectstarter/backend
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
@@ -237,7 +237,7 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
-            if grep -q "success" ~/project/backend/migrations.txt
+            if grep -q "success" ~/cdond-c3-projectstarter/backend/migrations.txt
             then
               curl --insecure https://kvdb.io/PsifErj3dtW3MTxte9Ruox/migration_$\{CIRCLE_WORKFLOW_ID:0:7\} -d '1'
             fi
@@ -260,7 +260,7 @@ jobs:
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --filters Name=udapeople:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
@@ -303,7 +303,7 @@ jobs:
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
-            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
+            mkdir -p ~/cdond-c3-projectstarter/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is ------$(cat inventory.txt)"
@@ -327,11 +327,11 @@ jobs:
       - run:
           name: Backend smoke test
           command: |
-            export BACKEND_IP=$(tail ~/project/.circleci/ansible/inventory.txt)
-            #export BACKEND_IP=$(aws ec2 describe-instances \
-            #--query 'Reservations[*].Instances[*].PublicIpAddress' \
-            #--filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-            #--output text)
+            echo BACKEND_IP=$(tail ~/cdond-c3-projectstarter/.circleci/ansible/inventory.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters Name=udapeople:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+            --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
             if curl --connect-timeout 5 "${API_URL}/api/status" | grep "ok"; then return 0; else return 1; fi
