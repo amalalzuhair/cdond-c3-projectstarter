@@ -34,6 +34,7 @@ commands:
           command: |
             cd ~/project/backend
             npm install
+            npm audit fix --force
             npm run build
             npm run migrations:revert
 
@@ -67,6 +68,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix
             npm run build
       - save_cache:
           key: backend-build
