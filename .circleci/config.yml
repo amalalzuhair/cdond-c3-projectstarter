@@ -34,7 +34,7 @@ commands:
           when: on_fail
           command: |
             cd ~/project/backend
-            npm install --legacy-peer-deps
+            npm install
             npm run build
             npm run migrations:revert
 
@@ -306,9 +306,8 @@ jobs:
           name: Deploy backend
           command: |
             cd backend
-            npm install --global yarn
-            yarn install
-            yarn build
+            npm install
+            npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
